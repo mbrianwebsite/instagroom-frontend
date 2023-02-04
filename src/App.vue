@@ -1,18 +1,68 @@
+<script setup>
+import { ref } from "vue";
+import SideBar from "@/components/SideBar.vue"
+import { RouterView } from "vue-router"
+
+const isLogin = ref(false)
+const drawer = ref(false)
+const theme = ref('light')
+
+function changeTheme() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light'
+}
+
+
+</script>
+
 <template>
-  <v-app>
+  <v-app :theme="theme">
+    <v-app-bar>
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-title>
+        Instagroom
+      </v-app-bar-title>
+      <v-spacer></v-spacer>
+      <v-text-field label="Search > Enter" single-line hide-details></v-text-field>
+      <v-btn @click="changeTheme">
+        <v-icon :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
+      </v-btn>
+    </v-app-bar>
+    <SideBar :drawer="drawer" />
+
     <v-main>
-      <router-view/>
+      <v-container class="w-75">
+        <RouterView />
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
-<script>
-
-export default {
-  name: 'App',
-
-  data: () => ({
-    //
-  }),
+<style>
+:root {
+  --primary: rgba(229, 229, 229, 1);
+  --secondary: rgba(229, 229, 229, 0.1);
 }
-</script>
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary) var(--primary);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  height: 1px;
+  width: 1px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  border-radius: 14px;
+  border: 3px solid var(--primary);
+}
+</style>
