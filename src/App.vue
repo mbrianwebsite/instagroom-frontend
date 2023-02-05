@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import SideBar from "@/components/SideBar.vue"
-import { RouterView } from "vue-router"
+import { RouterView, RouterLink } from "vue-router"
 
 const isLogin = ref(false)
 const drawer = ref(false)
@@ -19,10 +19,12 @@ function changeTheme() {
     <v-app-bar>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title>
-        Instagroom
+        <v-btn to="/">
+          Instagroom
+        </v-btn>
       </v-app-bar-title>
-      <v-spacer></v-spacer>
-      <v-text-field label="Search > Enter" single-line hide-details></v-text-field>
+      <!-- <v-spacer></v-spacer> -->
+      <v-text-field label="Search" single-line hide-details></v-text-field>
       <v-btn @click="changeTheme">
         <v-icon :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
       </v-btn>
@@ -30,7 +32,7 @@ function changeTheme() {
     <SideBar :drawer="drawer" />
 
     <v-main>
-      <v-container class="w-75">
+      <v-container class="w-100 konten-utama">
         <RouterView />
       </v-container>
     </v-main>
@@ -38,6 +40,10 @@ function changeTheme() {
 </template>
 
 <style>
+.konten-utama {
+  max-width: 1000px;
+}
+
 :root {
   --primary: rgba(229, 229, 229, 1);
   --secondary: rgba(229, 229, 229, 0.1);

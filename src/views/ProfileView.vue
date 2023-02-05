@@ -1,7 +1,7 @@
 <template>
-    <v-row class="w-100" style="margin-top:40px;">
+    <v-row class="w-100" style="margin-top:40px;margin: 0 auto;">
         <v-card class="mx-auto d-md-flex flex-md-col d-sm-flex flex-sm-row profile-image"
-            style="padding: 10px;width: 500px;">
+            style="padding: 20px;width: 500px;">
             <div style="width: 100%;">
                 <v-img class="rounded-circle" style="width:175px;height: 175px; margin: 0 auto; padding: 10" cover
                     src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"></v-img>
@@ -13,7 +13,15 @@
                     industry's standard
                 </div>
             </div>
+            <div>
+
+            </div>
         </v-card>
+    </v-row>
+    <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
+        <v-col cols="4" class="text-center">5 Follower</v-col>
+        <v-col cols="4" class="text-center">100 Post</v-col>
+        <v-col cols="4" class="text-center">75 Following</v-col>
     </v-row>
     <div style="min-height:50px">
 
@@ -38,11 +46,5 @@
     padding: 8px;
     box-shadow: none;
 
-}
-
-.avatar-image-profile {
-    margin: 0 auto;
-    border: 50px;
-    border-color: black;
 }
 </style>

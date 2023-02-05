@@ -1,6 +1,6 @@
 <template>
-    <v-card title="Caption Header" subtitle="Location" style="width: 500px; margin: 0 auto;">
-        <v-img style="width:100%" cover src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"></v-img>
+    <v-card title="Caption Header" subtitle="Location" style="max-width: 500px; margin: 0 auto;">
+        <v-img style="max-width:500px" cover src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"></v-img>
         <div style="padding:32px;">
             <b>01/01/2021</b> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
             been

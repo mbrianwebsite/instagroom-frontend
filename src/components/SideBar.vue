@@ -1,7 +1,11 @@
 <script setup>
+import { ref } from 'vue';
+import Modal from './Modal.vue';
 defineProps({
     drawer: Boolean
 })
+
+const isRegister = ref(true)
 
 </script>
 
@@ -15,13 +19,14 @@ defineProps({
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-            <v-list-item prepend-icon="mdi-image-multiple" title="My Photos" value="myphotos"></v-list-item>
+            <v-list-item prepend-icon="mdi-image-multiple" title="My Photos" value="myphotos"
+                to="/profile"></v-list-item>
             <v-list-item prepend-icon="mdi-account-heart" title="Following" value="following"></v-list-item>
             <v-list-item prepend-icon="mdi-account-group" title="Follower" value="follower"></v-list-item>
             <v-list-item prepend-icon="mdi-heart" title="Like" value="like"></v-list-item>
-            <v-list-item prepend-icon="mdi-login" title="LogIn" value="login" ></v-list-item>
+            <Modal :isRegister="isRegister = false" />
             <v-list-item prepend-icon="mdi-logout" title="LogOut" value="logout"></v-list-item>
-            <v-list-item prepend-icon="mdi-account-plus" title="Register" value="register"></v-list-item>
+            <Modal :isRegister="isRegister = true" />
         </v-list>
     </v-navigation-drawer>
 </template>
