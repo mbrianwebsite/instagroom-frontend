@@ -1,5 +1,24 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { useUserStore } from '@/stores/users';
+import { storeToRefs } from 'pinia'
+
+const userStore = useUserStore()
+
+const { errorMessage } = storeToRefs(userStore)
+
+const userCredentials = reactive({
+    email: "",
+    password: "",
+    username: "",
+    name: ""
+
+})
+
+const signUpNow = (e) => {
+    userStore.handleSignup(userCredentials)
+}
+
 defineProps({
     isRegister: Boolean
 })
@@ -23,16 +42,22 @@ const dialog = ref(false)
                     <v-container>
                         <v-row>
                             <v-col v-if="isRegister" cols="12">
-                                <v-text-field label="Full Name*" required></v-text-field>
+                                <v-text-field label="Full Name*" required v-model="userCredentials.name"></v-text-field>
+                            </v-col>
+                            <v-col v-if="isRegister" cols="12">
+                                <v-text-field label="Username*" required
+                                    v-model="userCredentials.username"></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Email*" required></v-text-field>
+                                <v-text-field label="Email*" required v-model="userCredentials.email"></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <v-text-field label="Password*" type="password" required></v-text-field>
+                                <v-text-field label="Password*" type="password" required
+                                    v-model="userCredentials.password"></v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
+                    <small style="color: red;">{{ errorMessage }}</small><br>
                     <small>*indicates required field</small>
                 </v-card-text>
                 <v-card-actions>
@@ -40,7 +65,7 @@ const dialog = ref(false)
                     <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
                         Close
                     </v-btn>
-                    <v-btn v-if="isRegister" color="blue-darken-1" variant="text" @click="dialog = false">
+                    <v-btn v-if="isRegister" color="blue-darken-1" variant="text" @click="signUpNow">
                         Register
                     </v-btn>
                     <v-btn v-else color="blue-darken-1" variant="text" @click="dialog = false">

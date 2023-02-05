@@ -20,7 +20,7 @@
     </v-row>
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
         <v-col cols="4" class="text-center">5 Follower</v-col>
-        <v-col cols="4" class="text-center">100 Post</v-col>
+        <v-col cols="4" class="text-center">100 Images</v-col>
         <v-col cols="4" class="text-center">75 Following</v-col>
     </v-row>
     <div style="min-height:50px">
