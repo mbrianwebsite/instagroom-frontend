@@ -1,5 +1,6 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
+import { supabase } from "../supabase";
 
 export const useUserStore = defineStore("users", () => {
   const user = ref(null);
@@ -14,10 +15,10 @@ export const useUserStore = defineStore("users", () => {
   };
 
   const handleLogin = () => {};
-  const handleSignup = (credentials) => {
+  const handleSignup = async (credentials) => {
     const { email, password, username, name } = credentials;
 
-    if (password.length < 6) {
+    if (password.length < 3) {
       return (errorMessage.value = "Password is too short");
     }
 
@@ -29,11 +30,52 @@ export const useUserStore = defineStore("users", () => {
     }
 
     if (!validateEmail(email)) {
-      return (errorMessage.value = "Please ");
+      return (errorMessage.value = "Please provide valid email");
     }
+
+    const { data: userWithUsername } = await supabase
+      .from("users")
+      .select()
+      .eq("username", username)
+      .single();
+
+    if (userWithUsername) {
+      return (errorMessage.value = "Username already registered");
+    }
+
+    const { data: userWithEmail } = await supabase
+      .from("users")
+      .select()
+      .eq("email", email)
+      .single();
+
+    if (userWithEmail) {
+      return (errorMessage.value = "Email already registered");
+    }
+
+    errorMessage.value = "";
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      return (errorMessage.value = error.message);
+    }
+
+    await supabase.from("users").insert({
+      name,
+      username,
+      email,
+    });
   };
   const handleLogout = () => {};
   const getUser = () => {};
+
+  const clearErrorMessage = () => {
+    errorMessage.value = "";
+  };
 
   return {
     user,
@@ -42,5 +84,6 @@ export const useUserStore = defineStore("users", () => {
     handleSignup,
     handleLogout,
     getUser,
+    clearErrorMessage,
   };
 });

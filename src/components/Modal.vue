@@ -19,6 +19,10 @@ const signUpNow = (e) => {
     userStore.handleSignup(userCredentials)
 }
 
+const handleCancel = (e) => {
+    userStore.clearErrorMessage()
+}
+
 defineProps({
     isRegister: Boolean
 })
@@ -62,10 +66,10 @@ const dialog = ref(false)
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
+                    <v-btn color="blue-darken-1" variant="text" @click="handleCancel(); dialog = false">
                         Close
                     </v-btn>
-                    <v-btn v-if="isRegister" color="blue-darken-1" variant="text" @click="signUpNow">
+                    <v-btn v-if="isRegister" color="blue-darken-1" variant="text" @click="signUpNow()">
                         Register
                     </v-btn>
                     <v-btn v-else color="blue-darken-1" variant="text" @click="dialog = false">
