@@ -3,12 +3,14 @@ import { ref, onMounted } from "vue";
 import SideBar from "@/components/SideBar.vue"
 import { RouterView, RouterLink } from "vue-router"
 import { useUserStore } from "./stores/users";
+import { storeToRefs } from "pinia";
 
-const isLogin = ref(false)
+
 const drawer = ref(false)
 const theme = ref('light')
 
 const userStore = useUserStore()
+const { isLogin } = storeToRefs(userStore)
 
 onMounted(() => {
   userStore.getUser()
@@ -17,7 +19,6 @@ onMounted(() => {
 function changeTheme() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
-
 
 </script>
 
@@ -36,10 +37,10 @@ function changeTheme() {
         <v-icon :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
       </v-btn>
     </v-app-bar>
-    <SideBar :drawer="drawer" />
+    <SideBar :isLogin="isLogin" :drawer="drawer" />
 
     <v-main>
-      <v-container class="w-100 konten-utama">
+      <v-container v-if="isLogin" class="w-100 konten-utama">
         <RouterView />
       </v-container>
     </v-main>
