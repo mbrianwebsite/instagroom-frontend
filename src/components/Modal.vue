@@ -50,7 +50,7 @@ defineProps({
 const dialog = ref(false)
 </script>
 <template>
-    <div class="text-center">
+    <div class="text-center">{{ user }}
         <v-dialog v-model="dialog">
             <template v-slot:activator="{ props }">
                 <v-list-item style="text-align: left;" v-if="isRegister" prepend-icon="mdi-account-plus"

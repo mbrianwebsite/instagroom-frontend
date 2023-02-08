@@ -1,11 +1,18 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import SideBar from "@/components/SideBar.vue"
 import { RouterView, RouterLink } from "vue-router"
+import { useUserStore } from "./stores/users";
 
 const isLogin = ref(false)
 const drawer = ref(false)
 const theme = ref('light')
+
+const userStore = useUserStore()
+
+onMounted(() => {
+  userStore.getUser()
+})
 
 function changeTheme() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
