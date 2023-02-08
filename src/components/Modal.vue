@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 
-const { errorMessage, loading } = storeToRefs(userStore)
+const { errorMessage, loading, user } = storeToRefs(userStore)
 
 const userCredentials = reactive({
     email: "",
@@ -15,12 +15,25 @@ const userCredentials = reactive({
 
 })
 
-const signUpNow = (e) => {
-    userStore.handleSignup(userCredentials)
+const clearUserCredentialsInput = () => {
+    userCredentials.email = ""
+    userCredentials.name = ""
+    userCredentials.username = ""
+    userCredentials.password = ""
+    userStore.clearErrorMessage()
+}
+
+const signUpNow = async (e) => {
+    await userStore.handleSignup(userCredentials)
+    if (user.value) {
+        dialog.value = false
+        clearUserCredentialsInput()
+    }
 }
 
 const handleCancel = (e) => {
-    userStore.clearErrorMessage()
+    clearUserCredentialsInput()
+    dialog.value = false
 }
 
 defineProps({
@@ -66,7 +79,7 @@ const dialog = ref(false)
                 </v-card-text>
                 <v-card-actions v-if="!loading">
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-darken-1" variant="text" @click="handleCancel(); dialog = false">
+                    <v-btn color="blue-darken-1" variant="text" @click="handleCancel">
                         Close
                     </v-btn>
                     <v-btn v-if="isRegister" color="blue-darken-1" variant="text" @click="signUpNow()">
