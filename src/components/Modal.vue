@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 
-const { errorMessage } = storeToRefs(userStore)
+const { errorMessage, loading } = storeToRefs(userStore)
 
 const userCredentials = reactive({
     email: "",
@@ -37,7 +37,7 @@ const dialog = ref(false)
                 <v-list-item style="text-align: left;" v-else prepend-icon="mdi-login" title="LogIn" value="login"
                     v-bind="props"></v-list-item>
             </template>
-            <v-card>
+            <v-card :loading="loading">
                 <v-card-title>
                     <span v-if="isRegister" class="text-h5">Register New Account</span>
                     <span v-else class="text-h5">Please Login</span>
@@ -64,7 +64,7 @@ const dialog = ref(false)
                     <small style="color: red;">{{ errorMessage }}</small><br>
                     <small>*indicates required field</small>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions v-if="!loading">
                     <v-spacer></v-spacer>
                     <v-btn color="blue-darken-1" variant="text" @click="handleCancel(); dialog = false">
                         Close
