@@ -27,9 +27,11 @@ const isRegister = ref(true)
             <v-list-item v-if="isLogin" prepend-icon="mdi-account-group" title="Follower"
                 value="follower"></v-list-item>
             <v-list-item v-if="isLogin" prepend-icon="mdi-heart" title="Like" value="like"></v-list-item>
-            <Modal v-if="!isLogin" :isRegister="isRegister = false" />
-            <Modal v-if="!isLogin" :isRegister="isRegister = true" />
-            <v-list-item v-if="isLogin" prepend-icon="mdi-logout" title="LogOut" value="logout"></v-list-item>
+            <Modal v-if="!isLogin" :isRegister="isRegister = false" :isLogout="isLogout = false" />
+            <Modal v-if="!isLogin" :isRegister="isRegister = true" :isLogout="isLogout = false" />
+            <Modal v-if="isLogin" :isRegister="isRegister = false" :isLogout="isLogout = true" prepend-icon="mdi-logout"
+                title="LogOut" value="logout">
+            </Modal>
         </v-list>
     </v-navigation-drawer>
 </template>

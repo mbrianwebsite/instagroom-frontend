@@ -6,7 +6,7 @@ import { useUserStore } from "./stores/users";
 import { storeToRefs } from "pinia";
 
 
-const drawer = ref(false)
+const drawer = ref(true)
 const theme = ref('light')
 
 const userStore = useUserStore()
