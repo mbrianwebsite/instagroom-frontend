@@ -26,8 +26,16 @@ const clearUserCredentialsInput = () => {
 const signUpNow = async (e) => {
     await userStore.handleSignup(userCredentials)
     if (user.value) {
-        dialog.value = false
         clearUserCredentialsInput()
+        dialog.value = false
+    }
+}
+
+const signInNow = async (e) => {
+    await userStore.handleLogin(userCredentials)
+    if (user.value) {
+        clearUserCredentialsInput()
+        dialog.value = false
     }
 }
 
@@ -85,7 +93,7 @@ const dialog = ref(false)
                     <v-btn v-if="isRegister" color="blue-darken-1" variant="text" @click="signUpNow()">
                         Register
                     </v-btn>
-                    <v-btn v-else color="blue-darken-1" variant="text" @click="dialog = false">
+                    <v-btn v-else color="blue-darken-1" variant="text" @click="signInNow">
                         Login
                     </v-btn>
                 </v-card-actions>

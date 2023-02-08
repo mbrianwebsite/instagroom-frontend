@@ -15,7 +15,43 @@ export const useUserStore = defineStore("users", () => {
       );
   };
 
-  const handleLogin = () => {};
+  const handleLogin = async (credentials) => {
+    const { email, password } = credentials;
+    if (!validateEmail(email)) {
+      return (errorMessage.value = "Please provide valid email");
+    }
+    if (!password.length) {
+      return (errorMessage.value = "Please provide your password");
+    }
+
+    loading.value = true;
+
+    const { error, data } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      loading.value = false;
+      return (errorMessage.value = error.message);
+    }
+
+    const { data: newUser } = await supabase
+      .from("users")
+      .select()
+      .eq("email", email)
+      .single();
+
+    user.value = {
+      id: newUser.id,
+      email: newUser.email,
+      username: newUser.username,
+      name: newUser.name,
+    };
+
+    loading.value = false;
+  };
+
   const handleSignup = async (credentials) => {
     const { email, password, username, name } = credentials;
 
@@ -74,6 +110,7 @@ export const useUserStore = defineStore("users", () => {
       name,
       username,
       email,
+      password,
     });
 
     const { data: newUser } = await supabase
