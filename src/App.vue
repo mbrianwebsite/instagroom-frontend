@@ -10,7 +10,7 @@ const drawer = ref(true)
 const theme = ref('light')
 
 const userStore = useUserStore()
-const { isLogin } = storeToRefs(userStore)
+const { isLogin, user } = storeToRefs(userStore)
 
 onMounted(() => {
   userStore.getUser()
@@ -37,11 +37,11 @@ function changeTheme() {
         <v-icon :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
       </v-btn>
     </v-app-bar>
-    <SideBar :isLogin="isLogin" :drawer="drawer" />
+    <SideBar :isLogin="isLogin" :drawer="drawer" :user="user" />
 
     <v-main>
       <v-container v-if="isLogin" class="w-100 konten-utama">
-        <RouterView />
+        <RouterView :user="user" />
       </v-container>
     </v-main>
   </v-app>

@@ -1,3 +1,34 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router'
+import { supabase } from '../supabase';
+const route = useRoute()
+console.log(route.params.username)
+
+const profileData = ref("")
+
+onMounted(async () => {
+
+    const { data: userWithUsername } = await supabase
+        .from("users")
+        .select()
+        .eq("username", route.params.username)
+        .single();
+    // console.log(userWithUsername);
+
+    profileData.value = {
+        id: userWithUsername.id,
+        email: userWithUsername.email,
+        username: userWithUsername.username,
+        name: userWithUsername.name,
+    };
+})
+
+defineProps({
+    user: Object
+})
+</script>
+
 <template>
     <v-row class="w-100" style="margin-top:40px;margin: 0 auto;">
         <v-card class="mx-auto d-md-flex flex-md-col d-sm-flex flex-sm-row profile-image"
@@ -7,7 +38,8 @@
                     src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"></v-img>
             </div>
             <div>
-                <v-list-item class="text-slate" title="Tony Adam" subtitle="tony_a88@gmailcom"></v-list-item>
+                <v-list-item class="text-slate" :title="profileData.name"
+                    :subtitle="profileData.username"></v-list-item>
                 <div style="padding: 16px;">
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
                     industry's standard
