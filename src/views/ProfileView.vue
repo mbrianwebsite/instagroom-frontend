@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,watch } from 'vue';
 import { useRoute } from 'vue-router'
 import { supabase } from '../supabase';
 const route = useRoute()
@@ -7,8 +7,16 @@ console.log(route.params.username)
 
 const profileData = ref("")
 
-onMounted(async () => {
+watch(() => route.query,()=>{
+    if(route.params.username) getDataProfile()
+    // refresh()
+})
 
+onMounted(async () => {
+    getDataProfile()    
+})
+
+const getDataProfile = async () => {
     const { data: userWithUsername } = await supabase
         .from("users")
         .select()
@@ -16,17 +24,18 @@ onMounted(async () => {
         .single();
     // console.log(userWithUsername);
 
+    if(!userWithUsername){
+        return alert("username not found")
+    }
+
     profileData.value = {
         id: userWithUsername.id,
         email: userWithUsername.email,
         username: userWithUsername.username,
         name: userWithUsername.name,
     };
-})
+}
 
-defineProps({
-    user: Object
-})
 </script>
 
 <template>

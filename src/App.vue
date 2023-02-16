@@ -1,13 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import SideBar from "@/components/SideBar.vue"
-import { RouterView, RouterLink } from "vue-router"
+import { RouterView, useRouter } from "vue-router"
 import { useUserStore } from "./stores/users";
 import { storeToRefs } from "pinia";
 
 
 const drawer = ref(true)
 const theme = ref('light')
+
+const router = useRouter()
 
 const userStore = useUserStore()
 const { isLogin, user } = storeToRefs(userStore)
@@ -18,6 +20,14 @@ onMounted(() => {
 
 function changeTheme() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
+}
+
+const aUser = ref("")
+const aUsername = ref("")
+
+const searchUser = () => {
+  router.push(`/profile/${aUser.value}`)
+  aUser.value = ""
 }
 
 </script>
@@ -32,7 +42,7 @@ function changeTheme() {
         </v-btn>
       </v-app-bar-title>
       <!-- <v-spacer></v-spacer> -->
-      <v-text-field label="Search" single-line hide-details></v-text-field>
+      <v-text-field label="Search" @keyup.enter="searchUser" v-model="aUser" single-line hide-details></v-text-field>
       <v-btn @click="changeTheme">
         <v-icon :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
       </v-btn>
@@ -41,7 +51,7 @@ function changeTheme() {
 
     <v-main>
       <v-container v-if="isLogin" class="w-100 konten-utama">
-        <RouterView :user="user" />
+        <RouterView />
       </v-container>
     </v-main>
   </v-app>
