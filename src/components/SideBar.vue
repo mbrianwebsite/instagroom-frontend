@@ -1,6 +1,9 @@
 <script setup>
+
+
 import { ref } from 'vue';
-import Modal from './Modal.vue';
+import AuthModal from './AuthModal.vue';
+import UploadPhotoModal from './UploadPhotoModal.vue';
 defineProps({
     drawer: Boolean,
     isLogin: Boolean,
@@ -23,16 +26,14 @@ const isRegister = ref(true)
         <v-list density="compact" nav>
             <v-list-item v-if="isLogin" prepend-icon="mdi-image-multiple" title="My Photos" value="myphotos"
                 :to="`/profile/${user.username}`"></v-list-item>
-            <v-list-item v-if="isLogin" prepend-icon="mdi-account-heart" title="Following"
-                value="following"></v-list-item>
-            <v-list-item v-if="isLogin" prepend-icon="mdi-account-group" title="Follower"
-                value="follower"></v-list-item>
+            <v-list-item v-if="isLogin" prepend-icon="mdi-account-heart" title="Following" value="following"></v-list-item>
+            <v-list-item v-if="isLogin" prepend-icon="mdi-account-group" title="Follower" value="follower"></v-list-item>
             <v-list-item v-if="isLogin" prepend-icon="mdi-heart" title="Like" value="like"></v-list-item>
-            <Modal v-if="!isLogin" :isRegister="isRegister = false" :isLogout="isLogout = false" />
-            <Modal v-if="!isLogin" :isRegister="isRegister = true" :isLogout="isLogout = false" />
-            <Modal v-if="isLogin" :isRegister="isRegister = false" :isLogout="isLogout = true" prepend-icon="mdi-logout"
+            <AuthModal v-if="!isLogin" :isRegister="isRegister = false" :isLogout="isLogout = false" />
+            <AuthModal v-if="!isLogin" :isRegister="isRegister = true" :isLogout="isLogout = false" />
+            <AuthModal v-if="isLogin" :isRegister="isRegister = false" :isLogout="isLogout = true" prepend-icon="mdi-logout"
                 title="LogOut" value="logout">
-            </Modal>
+            </AuthModal>
         </v-list>
-    </v-navigation-drawer>
+</v-navigation-drawer>
 </template>

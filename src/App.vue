@@ -51,10 +51,10 @@ const searchUser = () => {
 
     <v-main>
       <v-container v-if="isLogin" class="w-100 konten-utama">
-        <RouterView />
+        <RouterView :user="user" />
       </v-container>
     </v-main>
-  </v-app>
+</v-app>
 </template>
 
 <style>

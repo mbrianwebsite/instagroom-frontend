@@ -1,19 +1,27 @@
 <script setup>
-import { ref, onMounted,watch } from 'vue';
+
+
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'
 import { supabase } from '../supabase';
+import UploadPhotoModal from '../components/UploadPhotoModal.vue'
+
 const route = useRoute()
 console.log(route.params.username)
 
 const profileData = ref("")
 
-watch(() => route.query,()=>{
-    if(route.params.username) getDataProfile()
+defineProps({
+    user: Object
+})
+
+watch(() => route.query, () => {
+    if (route.params.username) getDataProfile()
     // refresh()
 })
 
 onMounted(async () => {
-    getDataProfile()    
+    getDataProfile()
 })
 
 const getDataProfile = async () => {
@@ -24,7 +32,7 @@ const getDataProfile = async () => {
         .single();
     // console.log(userWithUsername);
 
-    if(!userWithUsername){
+    if (!userWithUsername) {
         return alert("username not found")
     }
 
@@ -47,18 +55,15 @@ const getDataProfile = async () => {
                     src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"></v-img>
             </div>
             <div>
-                <v-list-item class="text-slate" :title="profileData.name"
-                    :subtitle="profileData.username"></v-list-item>
+                <v-list-item class="text-slate" :title="profileData.name" :subtitle="profileData.username"></v-list-item>
                 <div style="padding: 16px;">
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
                     industry's standard
                 </div>
             </div>
-            <div>
-
-            </div>
         </v-card>
     </v-row>
+    <UploadPhotoModal :username="user.username" />
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
         <v-col cols="4" class="text-center">5 Follower</v-col>
         <v-col cols="4" class="text-center">100 Images</v-col>
@@ -79,7 +84,7 @@ const getDataProfile = async () => {
                 </template>
             </v-img>
         </v-col>
-    </v-row>
+</v-row>
 </template>
 
 <style scoped>
