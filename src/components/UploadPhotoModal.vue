@@ -1,14 +1,47 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router'
+import { supabase } from '../supabase';
 const route = useRoute()
+
+const image = ref(null)
+const caption = ref("")
+const description = ref("")
+
+const loading = ref(false)
 
 const routeUsername = ref(route.params.username)
 
 const dialog = ref(false)
-defineProps({
-    username: String
-})
+
+const props = defineProps(['username', 'userId'])
+
+const username = ref(props.username)
+const userId = ref(props.userId)
+
+const handleUploadChange = async (e) => {
+    if (e.target.files[0]) {
+        image.value = e.target.files[0]
+    }
+}
+
+const uploadAnImage = async () => {
+    if (image.value) {
+        const fileName = Math.floor(Math.random() * 100000000000)
+        const { data, error } = await supabase.storage.from("images").upload('public/' + fileName, image.value);
+        if (data) {
+            await supabase.from("posts").insert({
+                url: data.path,
+                caption: caption.value,
+                description: description.value,
+                owner_id: userId.value
+            })
+            dialog.value = false
+        }
+    }
+
+}
+
 watch(() => route.query, () => {
     if (route.params.username) routeUsername.value = route.params.username
     // refresh()
@@ -28,21 +61,22 @@ watch(() => route.query, () => {
                     <v-btn icon dark @click="dialog = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Settings</v-toolbar-title>
+                    <v-toolbar-title>Upload Photo</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-toolbar-items>
-                        <v-btn variant="text" @click="dialog = false">
-                            Save
+                        <v-btn variant="text" @click="uploadAnImage">
+                            Upload
                         </v-btn>
                     </v-toolbar-items>
                 </v-toolbar>
                 <v-list lines="two" subheader>
-                    <v-list-subheader>User Controls</v-list-subheader>
+                    <v-list-subheader>Pelase insert a file</v-list-subheader>
+                    <v-text-field v-model="caption" class="mx-8 my-2" clearable label="Caption"></v-text-field>
+                    <v-textarea v-model="description" class="mx-8 my-2" clearable label="Description"></v-textarea>
+                    <v-file-input @change="handleUploadChange" class="mx-8 my-2" clearable label="File input"
+                        accept="image/jpg,image/png"></v-file-input>
                 </v-list>
                 <v-divider></v-divider>
-                <v-list lines="two" subheader>
-                    <v-list-subheader>General</v-list-subheader>
-                </v-list>
             </v-card>
         </v-dialog>
 </v-row>

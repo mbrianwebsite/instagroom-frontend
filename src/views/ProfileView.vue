@@ -63,7 +63,7 @@ const getDataProfile = async () => {
             </div>
         </v-card>
     </v-row>
-    <UploadPhotoModal :username="user.username" />
+    <UploadPhotoModal :username="user.username" :userId="user.id" />
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
         <v-col cols="4" class="text-center">5 Follower</v-col>
         <v-col cols="4" class="text-center">100 Images</v-col>
