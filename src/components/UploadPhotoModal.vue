@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, toDisplayString, watch } from 'vue';
 import { useRoute } from 'vue-router'
 import { supabase } from '../supabase';
 const route = useRoute()
@@ -9,6 +9,8 @@ const caption = ref("")
 const description = ref("")
 
 const loading = ref(false)
+const errorMessage = ref("")
+
 
 const routeUsername = ref(route.params.username)
 
@@ -26,20 +28,25 @@ const handleUploadChange = async (e) => {
 }
 
 const uploadAnImage = async () => {
+    loading.value = true
     if (image.value) {
         const fileName = Math.floor(Math.random() * 100000000000)
         const { data, error } = await supabase.storage.from("images").upload('public/' + fileName, image.value);
-        if (data) {
-            await supabase.from("posts").insert({
-                url: data.path,
-                caption: caption.value,
-                description: description.value,
-                owner_id: userId.value
-            })
-            dialog.value = false
-        }
-    }
 
+        if (error) {
+            loading.value = false
+            return errorMessage.value = "Unable to upload Image"
+        }
+
+        await supabase.from("posts").insert({
+            url: data.path,
+            caption: caption.value,
+            description: description.value,
+            owner_id: userId.value
+        })
+    }
+    loading.value = false
+    dialog.value = false
 }
 
 watch(() => route.query, () => {
@@ -56,7 +63,7 @@ watch(() => route.query, () => {
                     v-bind="props"> Upload
                 </v-btn>
             </template>
-            <v-card>
+            <v-card :loading="loading">
                 <v-toolbar dark color="blue">
                     <v-btn icon dark @click="dialog = false">
                         <v-icon>mdi-close</v-icon>
@@ -79,7 +86,7 @@ watch(() => route.query, () => {
                 <v-divider></v-divider>
             </v-card>
         </v-dialog>
-</v-row>
+    </v-row>
 </template>
 <style>
 .dialog-bottom-transition-enter-active,
