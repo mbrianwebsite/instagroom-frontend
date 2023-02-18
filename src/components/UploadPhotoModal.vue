@@ -21,6 +21,9 @@ const props = defineProps(['username', 'userId'])
 const username = ref(props.username)
 const userId = ref(props.userId)
 
+const emit = defineEmits(["updateValue"])
+
+
 const handleUploadChange = async (e) => {
     if (e.target.files[0]) {
         image.value = e.target.files[0]
@@ -47,12 +50,15 @@ const uploadAnImage = async () => {
     }
     loading.value = false
     dialog.value = false
+    emit("updateValue")
+    // location.reload()
 }
 
 watch(() => route.query, () => {
     if (route.params.username) routeUsername.value = route.params.username
     // refresh()
 })
+
 </script>
 
 <template>

@@ -5,23 +5,31 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'
 import { supabase } from '../supabase';
 import UploadPhotoModal from '../components/UploadPhotoModal.vue'
+import Gallery from '../components/Gallery.vue';
 
 const route = useRoute()
 console.log(route.params.username)
 
 const profileData = ref("")
+const profileImage = ref("")
 
 defineProps({
     user: Object
 })
 
 watch(() => route.query, () => {
-    if (route.params.username) getDataProfile()
-    // refresh()
+    if (route.params.username) {
+        getDataProfile()
+    }
 })
+
+const updateValue = () => {
+    getDataProfile()
+}
 
 onMounted(async () => {
     getDataProfile()
+    console.log(profileData._value)
 })
 
 const getDataProfile = async () => {
@@ -42,6 +50,27 @@ const getDataProfile = async () => {
         username: userWithUsername.username,
         name: userWithUsername.name,
     };
+
+    const { data: userPostImage } = await supabase
+        .from('posts')
+        .select('*')
+        .eq("owner_id", profileData.value.id);
+
+
+    if (!userPostImage) {
+        return alert("image not found")
+    }
+
+    profileImage.value = { ...userPostImage }
+    // profileImage.value = {
+    //     id: userPostImage.id,
+    //     url: userPostImage.url,
+    //     caption: userPostImage.caption,
+    //     description: userPostImage.description,
+    // };
+
+    // console.log(profileImage.value)
+    return
 }
 
 </script>
@@ -63,7 +92,7 @@ const getDataProfile = async () => {
             </div>
         </v-card>
     </v-row>
-    <UploadPhotoModal :username="user.username" :userId="user.id" />
+    <UploadPhotoModal @updateValue="updateValue" :username="user.username" :userId="user.id" />
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
         <v-col cols="4" class="text-center">5 Follower</v-col>
         <v-col cols="4" class="text-center">100 Images</v-col>
@@ -73,18 +102,13 @@ const getDataProfile = async () => {
 
     </div>
     <v-row>
-        <v-col v-for="n in 9" :key="n" class="d-flex child-flex" cols="4">
-            <v-img :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-                :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`" aspect-ratio="1" cover
-                class="bg-grey-lighten-2">
-                <template v-slot:placeholder>
-                    <v-row class="fill-height ma-0" align="center" justify="center">
-                        <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
-                    </v-row>
-                </template>
-            </v-img>
+        <v-col v-if="profileImage" v-for="postImage in profileImage" class="d-flex child-flex" cols="4">
+            <Gallery :postImage="postImage" />
         </v-col>
-</v-row>
+        <v-col v-else>
+            No post yet
+        </v-col>
+    </v-row>
 </template>
 
 <style scoped>
