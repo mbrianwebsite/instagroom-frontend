@@ -9,7 +9,6 @@ import Gallery from '../components/Gallery.vue';
 
 const route = useRoute()
 const usernameRoute = ref(route.params.username)
-// console.log(route.params.username)
 
 const profileData = ref("")
 const profileImage = ref("")
@@ -18,6 +17,13 @@ const profileImageLength = ref(0)
 defineProps({
     user: Object
 })
+
+const handleFollow = async (mainUserId, mainProfileId) => {
+    const response = await supabase.from("follower_following").insert({
+        follower_id: mainUserId,
+        following_id: mainProfileId
+    })
+}
 
 watch(() => route.query, () => {
     if (route.params.username) {
@@ -31,7 +37,6 @@ const updateValue = () => {
 
 onMounted(async () => {
     getDataProfile()
-    console.log(profileData._value)
 })
 
 const getDataProfile = async () => {
@@ -40,7 +45,6 @@ const getDataProfile = async () => {
         .select()
         .eq("username", route.params.username)
         .single();
-    // console.log(userWithUsername);
 
     if (!userWithUsername) {
         return alert("username not found")
@@ -58,7 +62,6 @@ const getDataProfile = async () => {
         .select('*')
         .eq("owner_id", profileData.value.id);
 
-    console.log(userPostImage)
 
     if (!userPostImage) {
         return alert("image not found")
@@ -73,7 +76,6 @@ const getDataProfile = async () => {
     //     description: userPostImage.description,
     // };
 
-    // console.log(profileImage.value)
     return
 }
 
@@ -98,7 +100,7 @@ const getDataProfile = async () => {
     </v-row>
     <UploadPhotoModal @updateValue="updateValue" :username="user.username" :userId="user.id" />
     <v-row v-if="user.username != route.params.username" justify="center">
-        <v-btn dark class="ma-2" color="red" prepend-icon="mdi-heart">Follow
+        <v-btn @click="handleFollow(user.id, profileData.id)" dark class="ma-2" color="red" prepend-icon="mdi-heart">Follow
         </v-btn>
     </v-row>
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
