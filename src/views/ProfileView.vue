@@ -8,21 +8,64 @@ import UploadPhotoModal from '../components/UploadPhotoModal.vue'
 import Gallery from '../components/Gallery.vue';
 
 const route = useRoute()
-const usernameRoute = ref(route.params.username)
 
 const profileData = ref("")
 const profileImage = ref("")
 const profileImageLength = ref(0)
+const isFollowing = ref(false)
+const profileFollower = ref(0)
+const profileFollowing = ref(0)
 
-defineProps({
-    user: Object
-})
+const props = defineProps(['user'])
+
+
+const countFollowing = async (profileUserId) => {
+    const { data } = await supabase.from("follower_following")
+        .select('follower_id')
+        .eq('follower_id', profileUserId)
+    profileFollowing.value = data.length
+}
+
+const countFollower = async (profileUserId) => {
+    const { data } = await supabase.from("follower_following")
+        .select('following_id')
+        .eq('following_id', profileUserId)
+    profileFollower.value = data.length
+}
+
+const handleIsFollowing = async (profileUserId) => {
+    if (props.user.id && (props.user.id !== profileUserId)) {
+        const { data } = await supabase.from("follower_following")
+            .select('*')
+            .eq('follower_id', props.user.id)
+            .eq('following_id', profileUserId)
+            .single()
+        if (data) isFollowing.value = true
+    }
+}
 
 const handleFollow = async (mainUserId, mainProfileId) => {
-    const response = await supabase.from("follower_following").insert({
+    const { data, error } = await supabase.from("follower_following").insert({
         follower_id: mainUserId,
         following_id: mainProfileId
     })
+    if (!error) {
+        isFollowing.value = true
+        profileFollower.value++
+    }
+}
+
+const handleUnFollow = async (mainUserId, mainProfileId) => {
+    const { data, error } = await supabase.from("follower_following")
+        .delete()
+        .match({
+            follower_id: mainUserId,
+            following_id: mainProfileId
+        });
+    if (!error) {
+        isFollowing.value = false
+        profileFollower.value--
+    }
 }
 
 watch(() => route.query, () => {
@@ -69,12 +112,10 @@ const getDataProfile = async () => {
 
     profileImageLength.value = userPostImage.length
     profileImage.value = { ...userPostImage }
-    // profileImage.value = {
-    //     id: userPostImage.id,
-    //     url: userPostImage.url,
-    //     caption: userPostImage.caption,
-    //     description: userPostImage.description,
-    // };
+
+    handleIsFollowing(profileData.value.id)
+    countFollower(profileData.value.id)
+    countFollowing(profileData.value.id)
 
     return
 }
@@ -100,13 +141,17 @@ const getDataProfile = async () => {
     </v-row>
     <UploadPhotoModal @updateValue="updateValue" :username="user.username" :userId="user.id" />
     <v-row v-if="user.username != route.params.username" justify="center">
-        <v-btn @click="handleFollow(user.id, profileData.id)" dark class="ma-2" color="red" prepend-icon="mdi-heart">Follow
+        <v-btn v-if="!isFollowing" @click="handleFollow(user.id, profileData.id)" dark class="ma-2" color="red"
+            prepend-icon="mdi-heart">Follow
+        </v-btn>
+        <v-btn v-else @click="handleUnFollow(user.id, profileData.id)" dark class="ma-2" color="red"
+            prepend-icon="mdi-heart">Followed
         </v-btn>
     </v-row>
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
-        <v-col cols="4" class="text-center">5 Follower</v-col>
+        <v-col cols="4" class="text-center">{{ profileFollower }} Follower</v-col>
         <v-col cols="4" class="text-center">{{ profileImageLength }} Images</v-col>
-        <v-col cols="4" class="text-center">75 Following</v-col>
+        <v-col cols="4" class="text-center">{{ profileFollowing }} Following</v-col>
     </v-row>
     <div style="min-height:50px">
 
