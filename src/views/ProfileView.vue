@@ -8,7 +8,8 @@ import UploadPhotoModal from '../components/UploadPhotoModal.vue'
 import Gallery from '../components/Gallery.vue';
 
 const route = useRoute()
-console.log(route.params.username)
+const usernameRoute = ref(route.params.username)
+// console.log(route.params.username)
 
 const profileData = ref("")
 const profileImage = ref("")
@@ -96,6 +97,10 @@ const getDataProfile = async () => {
         </v-card>
     </v-row>
     <UploadPhotoModal @updateValue="updateValue" :username="user.username" :userId="user.id" />
+    <v-row v-if="user.username != route.params.username" justify="center">
+        <v-btn dark class="ma-2" color="red" prepend-icon="mdi-heart">Follow
+        </v-btn>
+    </v-row>
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
         <v-col cols="4" class="text-center">5 Follower</v-col>
         <v-col cols="4" class="text-center">{{ profileImageLength }} Images</v-col>
