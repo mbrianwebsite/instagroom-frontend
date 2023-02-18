@@ -12,6 +12,7 @@ console.log(route.params.username)
 
 const profileData = ref("")
 const profileImage = ref("")
+const profileImageLength = ref(0)
 
 defineProps({
     user: Object
@@ -56,11 +57,13 @@ const getDataProfile = async () => {
         .select('*')
         .eq("owner_id", profileData.value.id);
 
+    console.log(userPostImage)
 
     if (!userPostImage) {
         return alert("image not found")
     }
 
+    profileImageLength.value = userPostImage.length
     profileImage.value = { ...userPostImage }
     // profileImage.value = {
     //     id: userPostImage.id,
@@ -95,14 +98,14 @@ const getDataProfile = async () => {
     <UploadPhotoModal @updateValue="updateValue" :username="user.username" :userId="user.id" />
     <v-row style="margin:0px auto; margin-top: 10px; max-width: 500px; ">
         <v-col cols="4" class="text-center">5 Follower</v-col>
-        <v-col cols="4" class="text-center">100 Images</v-col>
+        <v-col cols="4" class="text-center">{{ profileImageLength }} Images</v-col>
         <v-col cols="4" class="text-center">75 Following</v-col>
     </v-row>
     <div style="min-height:50px">
 
     </div>
     <v-row>
-        <v-col v-if="profileImage" v-for="postImage in profileImage" class="d-flex child-flex" cols="4">
+        <v-col v-if="profileImage[0]" v-for="postImage in profileImage" class="d-flex child-flex" cols="4">
             <Gallery :postImage="postImage" />
         </v-col>
         <v-col v-else>
