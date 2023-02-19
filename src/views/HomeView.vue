@@ -12,7 +12,7 @@ const getFollowing = async () => {
 
     const followersId = followers.map(f => f.following_id)
 
-    const { data: res } = await supabase.from("posts").select("*").eq("owner_id", followersId)
+    const { data: res } = await supabase.from("posts").select("*").eq("owner_id", followersId).order('created_at', { ascending: false })
 
 
     timelineData.value = res
