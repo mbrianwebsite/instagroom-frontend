@@ -1,27 +1,47 @@
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+// import { useRoute } from 'vue-router'
+import { supabase } from '../supabase';
+
+const props = defineProps(['user'])
+
+const timelineData = ref()
+
+const getFollowing = async () => {
+    const { data: followers } = await supabase.from("follower_following").select("following_id").eq("follower_id", props.user.id)
+
+    const followersId = followers.map(f => f.following_id)
+
+    const { data: res } = await supabase.from("posts").select("*").eq("owner_id", followersId)
+
+
+    timelineData.value = res
+    console.log(res)
+}
+
+onMounted(async () => {
+    getFollowing()
+})
+
+</script>
 <template>
-    <v-card title="Caption Header" subtitle="Location" style="max-width: 500px; margin: 0 auto;">
-        <v-img style="max-width:500px" cover src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"></v-img>
-        <div style="padding:32px;">
-            <b>01/01/2021</b> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-            been
-            the
-            industry's standard
-            dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
-            type specimen
-            book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining
-            essentially
-            unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-            passages, and more
-            recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-        </div>
-        <v-card-actions>
-            <v-btn>
-                <v-icon icon="mdi-heart"></v-icon>
-            </v-btn>
-            <v-btn>
-                <v-icon icon="mdi-account-heart"></v-icon>
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+    <div v-for="post in timelineData" class="py-4" style="max-width: 500px; margin: 0 auto;">
+        <v-card :title="post.caption" style="max-width: 500px; margin: 0 auto;">
+            <v-img style="max-width:500px;;" cover
+                :src="`https://cujaootecogyihvzqccn.supabase.co/storage/v1/object/public/images/${post.url}`"></v-img>
+            <div class="px-4 py-4">
+                <b>{{ post.created_at }}</b> <br>
+                {{ post.description }}
+            </div>
+            <v-card-actions>
+                <v-btn>
+                    <v-icon icon="mdi-heart"></v-icon>
+                </v-btn>
+                <v-btn>
+                    <v-icon icon="mdi-account-heart"></v-icon>
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </div>
 </template>
 
